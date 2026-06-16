@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Glitch Gallery - Horror Game</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050505;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Efek Senter */
+        #flashlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(circle 150px at center, transparent 0%, rgba(0,0,0,0.98) 100%);
+            z-index: 10;
+        }
+
+        .painting {
+            position: absolute;
+            width: 120px;
+            height: 160px;
+            background: #222;
+            border: 5px solid #444;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            transition: transform 0.3s;
+        }
+
+        .monster {
+            background-color: #300 !important;
+            border-color: #f00 !important;
+            color: #f00;
+        }
+
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 11;
+        }
+
+        #jumpscare {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            color: red;
+            font-size: 100px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui">Status: Cari Pintu Keluar...</div>
+    <div id="flashlight"></div>
+
+    <div id="game-container">
+        <!-- Lukisan-lukisan -->
+        <div class="painting" style="top: 20%; left: 10%;">Lukisan 1</div>
+        <div class="painting" style="top: 50%; left: 40%;">Lukisan 2</div>
+        <div class="painting" style="top: 10%; left: 70%;">Lukisan 3</div>
+        <div id="exit" class="painting" style="bottom: 10%; right: 10%; border-color: gold;">PINTU KELUAR</div>
+    </div>
+
+    <div id="jumpscare">MATI!</div>
+
+    <script>
+        const flashlight = document.getElementById('flashlight');
+        const paintings = document.querySelectorAll('.painting');
+        const jumpscare = document.getElementById('jumpscare');
+        const statusText = document.getElementById('ui');
+
+        // Menggerakkan senter mengikuti mouse
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            flashlight.style.background = `radial-gradient(circle 120px at ${x}px ${y}px, transparent 0%, rgba(0,0,0,0.99) 100%)`;
+        });
+
+        paintings.forEach(p => {
+            p.addEventListener('mouseenter', () => {
+                if (p.id === 'exit') {
+                    alert('Kamu Berhasil Keluar!');
+                    location.reload();
+                    return;
+                }
+
+                // Peluang 30% lukisan berubah jadi monster saat disentuh
+                if (Math.random() > 0.7) {
+                    p.classList.add('monster');
+                    p.innerText = "SAYA MELIHATMU";
+                    
+                    setTimeout(() => {
+                        triggerJumpscare();
+                    }, 500);
+                }
+            });
+        });
+
+        function triggerJumpscare() {
+            jumpscare.style.display = 'flex';
+            // Simulasi suara (beberapa browser memblokir audio tanpa interaksi)
+            console.log("SCREEEAM!");
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
